@@ -31,6 +31,7 @@ Git clone this repo then change directory to this project.
 2. Modify `./trojan/config/config.json`:
 
     Change `your_password` to your own password on `config:json:8` , this is your trojan password just safekeeping.
+    
     Change `your_domain_name` to your own domain name on `config:json:12-13`, this is your domain ssl certification path, Caddy server generate certs automatically on the path `/ssl/your_domain_name/your_domain_name.crt`
  
 3. Run `docker-compose up` or `docker-compose up -d`  with Daemon mode
