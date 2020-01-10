@@ -33,20 +33,11 @@ Git clone this repo then change directory to this project.
 2. Modify `./trojan/config/config.json`:
 
     Change `your_password` to your own password on `config:json:8` , this is your trojan password just safekeeping.
+    
     Change `your_domain_name` to your own domain name on `config:json:12-13`, this is your domain ssl certification path, Caddy server generate certs automatically on the path `/ssl/your_domain_name/your_domain_name.crt`
  
 3. Run `docker-compose up` or `docker-compose up -d`  with Daemon mode
 4. When each container is successfully built, it means that your Trojan and Caddy servers are working well.
-
-
-克隆本项目并进入项目目录。
-
-1. 编辑 `./caddy/Caddyfile`:
-   将`www.yourdomain.com`替换成你自己的域名。
-2. 编辑 `./trojan/config/config.json`:
-   在`config:json:8`位置，将`your_password`替换成你要设置的密码，这是你客户端连接需要用的密码，妥善保管。
-3. 执行  `docker-compose up`，或者执行`docker-compose up -d`以常驻进程模式运行容器。
-4. 如果每个容器都构建完成并没有产生异常退出，那么你的 Trojan + caddy 服务应该已经是正常运转状态了。
 
 
 ## Tips
