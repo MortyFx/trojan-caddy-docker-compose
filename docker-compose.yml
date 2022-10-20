@@ -1,24 +1,25 @@
-version: '3'
+version: "3"
 
 services:
   trojan:
-      build: ./trojan
-      ports:
-        - "443:443"
-      volumes:
-        - ./trojan/config:/config
-        - ./ssl:/ssl
-        - ./trojan/wait_for_caddy.sh:/wait_for_caddy.sh
-      links:
-        - caddy:__DOCKER_CADDY__
-      depends_on: 
-        - caddy
+    image: teddysun/trojan-go
+    ports:
+      - "1234:1234"
+    volumes:
+      - ./trojan/config:/etc/trojan-go
+      - ./ssl:/ssl
+    links:
+      - caddy:__DOCKER_CADDY__
+    depends_on:
+      - caddy
 
   caddy:
-      image: abiosoft/caddy
-      ports:
-        - "80:80"
-      volumes:
-        - ./wwwroot:/usr/src
-        - ./caddy/Caddyfile:/etc/Caddyfile
-        - ./ssl:/root/.caddy/acme/acme-v02.api.letsencrypt.org/sites
+    image: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./wwwroot:/usr/src
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./ssl:/root/.caddy/acme/acme-v02.api.letsencrypt.org/sites

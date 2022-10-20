@@ -5,7 +5,5 @@ www.yourdomain.com:80 {
 }
 
 www.yourdomain.com:443 {
-    root /usr/src/trojan
-    log /usr/src/caddy.log
-    index index.html
+    reverse_proxy localhost:1234
 }

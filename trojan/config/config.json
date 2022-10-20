@@ -1,7 +1,7 @@
 {
     "run_type": "server",
     "local_addr": "0.0.0.0",
-    "local_port": 443,
+    "local_port": 1234,
     "remote_addr": "__DOCKER_CADDY__",
     "remote_port": 80,
     "password": [
