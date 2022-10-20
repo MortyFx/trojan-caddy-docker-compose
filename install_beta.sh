@@ -108,17 +108,13 @@ if [ $real_addr == $local_addr ] ; then
 	green "       域名解析正常，开始安装trojan"
 	green "=========================================="
 	sleep 1s
-	
-$systemPackage -y install curl git  >/dev/null 2>&1
 
-
-install_docker
-
-install_docker_compose
-
-git clone https://github.com/Robot-Chen/trojan-caddy-docker-compose.git
-
-cd trojan-caddy-docker-compose
+# 假设已经clone这个仓库的用户已经安装完成了docker-compose以及进入到当前目录下
+# $systemPackage -y install curl git  >/dev/null 2>&1
+# install_docker
+# install_docker_compose
+# git clone https://github.com/Robot-Chen/trojan-caddy-docker-compose.git
+# cd trojan-caddy-docker-compose
 
 docker-compose down
 
@@ -168,6 +164,7 @@ EOF
         "prefer_ipv4": false,
         "no_delay": true,
         "keep_alive": true,
+        “reuse_port": false,
         "fast_open": false,
         "fast_open_qlen": 20
     },
@@ -181,25 +178,25 @@ EOF
     }
 }
 EOF
-	
 
-	docker-compose up -d
-	if [ $? = 0 ]; then
-	green "======================================================================"
-	green "Trojan已安装完成，"
-	blue "域名:${your_domain}"
-	blue "密码: ${trojan_passwd}  "
-	green "2、将下载的压缩包解压，打开文件夹，打开start.bat即打开并运行Trojan客户端"
-	green "3、打开stop.bat即关闭Trojan客户端"
-	green "4、Trojan客户端需要搭配浏览器插件使用，例如switchyomega等"
-	green "======================================================================"
-	else
-    red "==================================="
-	green "1. 重启VPS"
-	green "2. 重新执行脚本"
-	red "==================================="
-	fi
-	
+docker-compose up -d
+
+if [ $? = 0 ]; then
+green "======================================================================"
+green "Trojan已安装完成，"
+blue "域名: ${your_domain}"
+blue "密码: ${trojan_passwd}"
+green "2、将下载的压缩包解压，打开文件夹，打开start.bat即打开并运行Trojan客户端"
+green "3、打开stop.bat即关闭Trojan客户端"
+green "4、Trojan客户端需要搭配浏览器插件使用，例如switchyomega等"
+green "======================================================================"
+else
+red "==================================="
+green "1. 重启VPS"
+green "2. 重新执行脚本"
+red "==================================="
+fi
+
 else
 	red "================================"
 	red "域名解析地址与本VPS IP地址不一致"
