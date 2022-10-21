@@ -42,7 +42,7 @@ fi
 
 function install_trojan(){
 
-$systemPackage -y install curl net-tools  >/dev/null 2>&1
+$systemPackage -y install curl net-tools uuid-runtime  >/dev/null 2>&1
 docker-compose down
 
 Port80=`netstat -tlpn | awk -F '[: ]+' '$1=="tcp"{print $5}' | grep -w 80`
@@ -93,9 +93,13 @@ if [ "$CHECK" == "SELINUX=permissive" ]; then
 fi
 
 green "======================="
-blue "请输入trojan服务端的密码"
+blue "请输入trojan服务端的密码，留空则生成随机密码"
 green "======================="
 read trojan_passwd
+if [ "$trojan_passwd" == "" ]; then
+    trojan_passwd=`uuidgen`
+    echo $trojan_passwd
+fi
 
 green "======================="
 blue "请输入绑定到本VPS的域名"
@@ -190,6 +194,8 @@ green "======================================================================"
 green "Trojan已安装完成，"
 blue "域名: ${your_domain}"
 blue "密码: ${trojan_passwd}"
+green "Surgio 配置，"
+blue "{ type: 'trojan', nodeName: '${your_domain}', hostname: '${your_domain}', port: 443, password: '${trojan_passwd}', 'udp-relay': true }"
 green "======================================================================"
 else
 red "==================================="
