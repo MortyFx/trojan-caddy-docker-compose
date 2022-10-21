@@ -42,6 +42,8 @@ fi
 
 function install_trojan(){
 
+$systemPackage -y install curl net-tools  >/dev/null 2>&1
+docker-compose down
 
 Port80=`netstat -tlpn | awk -F '[: ]+' '$1=="tcp"{print $5}' | grep -w 80`
 Port443=`netstat -tlpn | awk -F '[: ]+' '$1=="tcp"{print $5}' | grep -w 443`
@@ -65,13 +67,13 @@ if [ "$CHECK" == "SELINUX=enforcing" ]; then
     red "检测到SELinux为开启状态，为防止申请证书失败，请先重启VPS后，再执行本脚本"
     red "======================================================================="
     read -p "是否现在重启 ?请输入 [Y/n] :" yn
-	[ -z "${yn}" ] && yn="y"
-	if [[ $yn == [Yy] ]]; then
-	    sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+    [ -z "${yn}" ] && yn="y"
+    if [[ $yn == [Yy] ]]; then
+        sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
             setenforce 0
-	    echo -e "VPS 重启中..."
-	    reboot
-	fi
+        echo -e "VPS 重启中..."
+        reboot
+    fi
     exit
 fi
 
@@ -80,13 +82,13 @@ if [ "$CHECK" == "SELINUX=permissive" ]; then
     red "检测到SELinux为宽容状态，为防止申请证书失败，请先重启VPS后，再执行本脚本"
     red "======================================================================="
     read -p "是否现在重启 ?请输入 [Y/n] :" yn
-	[ -z "${yn}" ] && yn="y"
-	if [[ $yn == [Yy] ]]; then
-	    sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
+    [ -z "${yn}" ] && yn="y"
+    if [[ $yn == [Yy] ]]; then
+        sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
             setenforce 0
-	    echo -e "VPS 重启中..."
-	    reboot
-	fi
+        echo -e "VPS 重启中..."
+        reboot
+    fi
     exit
 fi
 
@@ -104,41 +106,43 @@ local_addr=`curl ipv4.icanhazip.com`
 
 
 if [ $real_addr == $local_addr ] ; then
-	green "=========================================="
-	green "       域名解析正常，开始安装trojan"
-	green "=========================================="
-	sleep 1s
+    green "=========================================="
+    green "       域名解析正常，开始安装trojan"
+    green "=========================================="
+    sleep 1s
 
 # 假设已经clone这个仓库的用户已经安装完成了docker-compose以及进入到当前目录下
-# $systemPackage -y install curl git  >/dev/null 2>&1
+# 
 # install_docker
 # install_docker_compose
 # git clone https://github.com/Robot-Chen/trojan-caddy-docker-compose.git
 # cd trojan-caddy-docker-compose
 
-docker-compose down
-
 cat > ./caddy/Caddyfile <<-EOF
 ${your_domain}:80 {
-    root /usr/src/trojan
-    log /usr/src/caddy.log
-    index index.html
+    root * /usr/src/trojan
+    log {
+        output file /usr/src/caddy.log
+    }
+    file_server
 }
 ${your_domain}:443 {
-    root /usr/src/trojan
-    log /usr/src/caddy.log
-    index index.html
+    root * /usr/src/trojan
+    log {
+        output file /usr/src/caddy.log
+    }
+    file_server
 }
 EOF
 
 
-	rm -rf ./trojan/config/config.json
-	cat > ./trojan/config/config.json <<-EOF
+    rm -rf ./trojan/config/config.json
+    cat > ./trojan/config/config.json <<-EOF
 {
     "run_type": "server",
     "local_addr": "0.0.0.0",
     "local_port": 443,
-    "remote_addr": "caddy",
+    "remote_addr": "$your_domain",
     "remote_port": 80,
     "password": [
         "$trojan_passwd"
@@ -164,7 +168,7 @@ EOF
         "prefer_ipv4": false,
         "no_delay": true,
         "keep_alive": true,
-        “reuse_port": false,
+        "reuse_port": false,
         "fast_open": false,
         "fast_open_qlen": 20
     },
@@ -186,9 +190,6 @@ green "======================================================================"
 green "Trojan已安装完成，"
 blue "域名: ${your_domain}"
 blue "密码: ${trojan_passwd}"
-green "2、将下载的压缩包解压，打开文件夹，打开start.bat即打开并运行Trojan客户端"
-green "3、打开stop.bat即关闭Trojan客户端"
-green "4、Trojan客户端需要搭配浏览器插件使用，例如switchyomega等"
 green "======================================================================"
 else
 red "==================================="
@@ -198,10 +199,10 @@ red "==================================="
 fi
 
 else
-	red "================================"
-	red "域名解析地址与本VPS IP地址不一致"
-	red "本次安装失败，请确保域名解析正常"
-	red "================================"
+    red "================================"
+    red "域名解析地址与本VPS IP地址不一致"
+    red "本次安装失败，请确保域名解析正常"
+    red "================================"
 fi
 }
 
@@ -217,15 +218,15 @@ usermod -aG docker $USER
 
 function install_docker_compose(){
 
-	$systemPackage -y install  python-pip
-	pip install --upgrade pip
-	pip install docker-compose
+    $systemPackage -y install  python-pip
+    pip install --upgrade pip
+    pip install docker-compose
 
-	if [ $? = 1 ]; then
-	
+    if [ $? = 1 ]; then
+    
     curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-	chmod +x /usr/local/bin/docker-compose
-	ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 fi
 }
@@ -235,7 +236,7 @@ function remove_trojan(){
     red "即将卸载trojan"
     red "================================"
 
-	docker-compose down
+    docker-compose down
     green "=============="
     green "trojan删除完毕"
     green "=============="

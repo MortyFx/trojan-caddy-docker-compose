@@ -13,15 +13,18 @@ Trojan 服务端监听 443 端口，对正常来路的 https 请求，Trojan 服
 1. 编辑 `./caddy/Caddyfile`:
     ```
     www.yourdomain.com:80 {
-        root /usr/src/trojan
-        log /usr/src/caddy.log
-        index index.html
+        root * /usr/src/trojan
+        log {
+            output file /usr/src/caddy.log
+        }
+        file_server
     }
-
     www.yourdomain.com:443 {
-        root /usr/src/trojan
-        log /usr/src/caddy.log
-        index index.html
+        root * /usr/src/trojan
+        log {
+            output file /usr/src/caddy.log
+        }
+        file_server
     }
     ```
    将`www.yourdomain.com`替换成你自己的域名。
