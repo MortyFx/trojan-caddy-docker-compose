@@ -3,6 +3,7 @@ version: "3"
 services:
   trojan:
     image: teddysun/trojan-go
+    restart: unless-stopped
     ports:
       - "443:443"
       - "443:443/udp"
@@ -14,6 +15,7 @@ services:
 
   caddy:
     image: caddy
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
