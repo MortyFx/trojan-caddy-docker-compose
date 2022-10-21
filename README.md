@@ -15,15 +15,18 @@ Git clone this repo then change directory to this project.
 1. Modify `./caddy/Caddyfile`:
     ```
     www.yourdomain.com:80 {
-        root /usr/src/trojan
-        log /usr/src/caddy.log
-        index index.html
+        root * /usr/src/trojan
+        log {
+            output file /usr/src/caddy.log
+        }
+        file_server
     }
-
     www.yourdomain.com:443 {
-        root /usr/src/trojan
-        log /usr/src/caddy.log
-        index index.html
+        root * /usr/src/trojan
+        log {
+            output file /usr/src/caddy.log
+        }
+        file_server
     }
     ```
     Replace `www.yourdomain.com` with your own domain name.
