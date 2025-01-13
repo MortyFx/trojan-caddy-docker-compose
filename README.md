@@ -2,6 +2,8 @@
 
 [中文文档](https://github.com/FaithPatrick/trojan-caddy-docker-compose/blob/master/README_CN.md)
 
+[trojan](https://github.com/trojan-gfw/trojan) is an advanced proxy tool with an unidentifiable mechanism that help you bypass China's Great Firewall.
+
 Trojan server and Caddy integration with Docker compose。
 
 Trojan server listens port 443. For https requests from normal sources, Trojan server will forward them to Caddy server for processing and return to the Web page while requests from Trojan client will be proxied by Trojan server which like V2ray+Websocket+TLS avoid GFW detection by disguising requests.
